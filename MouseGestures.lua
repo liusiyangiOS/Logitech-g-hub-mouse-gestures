@@ -1,62 +1,52 @@
 --[[
-Author: Mark van den Berg
-Version: 0.8
-Date: 01-05-2020
-
-Special credits to https://github.com/wookiefriseur for showing a way to do this for windows gestures which inspired this script
-For some windows gestures check https://github.com/wookiefriseur/LogitechMouseGestures
-
-This script wil let you use a button on your mouse to act like the "Gesture button" from Logitech Options.
-It will also let you use another button on your mouse for navigating between browser pages using gestures.
-
-The default settings below will be for the multytasking gestures from macOS
- - Up 		Mission Control 	(Control+Up-Arrow)
- - Down 	Application Windows (Control+Down-Arrow)
- - Left 	move right a space 	(Control+Right-Arrow)
- - Right 	move left a space 	(Control+Left-Arrow)
-
-The default settings below will be for the navigation gestures for in browsers
- - Up 		{ no action }
- - Down 	{ no action }
- - Left 	next page 		(Command+Right-Bracket)
- - Right 	previous page 	(Command+Left-Bracket)
+  罗技鼠标手势脚本 v0.8
+  作者：Mark van den Berg（原作者）
+  修改：添加浏览器导航功能
+  
+  功能：
+  1. 手势控制 macOS 多任务（Mission Control、应用窗口、切换空间）
+  2. 侧键快速浏览器前进后退
+  3. 完全自定义配置
 ]]--
 
- 
--- The button your gestures are mapped to G1 = 1, G2 = 2 etc..
-gestureButtonNumber = 3;
+-- ==================== 配置区 ==================== 
 
--- The button navigation actions are mapped to G1 = 1, G2 = 2 etc..
-navigationNextButtonNumber = 5;
-navigationPreButtonNumber = 4;
 
--- The minimal horizontal/vertical distance your mouse needs to be moved for the gesture to recognize in pixels
-minimalHorizontalMovement = 100;
-minimalVerticalMovement = 100;
+-- 按键映射（G1 = 1, G2 = 2, G3 = 3，以此类推）
+gestureButtonNumber = 3;   -- 手势按键
+navigationNextButtonNumber = 5;   -- 前进按键
+navigationPreButtonNumber = 4;   -- 后退按键
 
--- Default values for 
-horizontalStartingPosistion = 0;
-verticalStartingPosistion = 0;
-horizontalEndingPosistion = 0;
-verticalEndingPosistion = 0;
+-- 手势灵敏度（像素）
+minimalHorizontalMovement = 100;   -- 水平最小移动距离
+minimalVerticalMovement = 100;   -- 垂直最小移动距离
 
--- Delay between keypresses in millies
-delay = 20
+-- 默认值（用于计算鼠标移动距离）
+horizontalStartingPosistion = 0;   -- 水平起始位置
+verticalStartingPosistion = 0;   -- 垂直起始位置
+horizontalEndingPosistion = 0;   -- 水平结束位置
+verticalEndingPosistion = 0;   -- 垂直结束位置
 
--- Here you can enable/disable features of the script
-missionControlEnabled = true
-applicationWindowsEnabled = true
-moveBetweenSpacesEnabled = true
-browserNavigationEnabled = true
+-- 按键延迟（毫秒）
+delay = 20;
 
--- Toggles debugging messages
+-- 功能开关
+missionControlEnabled = true   -- 调度中心
+applicationWindowsEnabled = true   -- 应用窗口
+moveBetweenSpacesEnabled = true   -- 切换空间
+browserNavigationEnabled = true   -- 浏览器导航
+
+-- 调试开关
 debuggingEnabeld = false
 
--- Event detection
+-- ==================== 事件检测 ====================
+
+
 function OnEvent(event, arg, family)
+	-- 鼠标按键按下事件检测
 	if event == "MOUSE_BUTTON_PRESSED" and (arg == gestureButtonNumber or arg == navigationNextButtonNumber or arg == navigationPreButtonNumber) then
 		if debuggingEnabeld then OutputLogMessage("\nEvent: " .. event .. " for button: " .. arg .. "\n") end
-		
+		-- 处理浏览器导航
 		if arg == navigationNextButtonNumber and browserNavigationEnabled then 
 		       performNextPageGesture()
 	       end
@@ -66,7 +56,7 @@ function OnEvent(event, arg, family)
 	       end
 		
 		
-		-- Get stating mouse posistion
+		-- 获取鼠标起始位置
 		horizontalStartingPosistion, verticalStartingPosistion = GetMousePosition()
 		
 		if debuggingEnabeld then 
@@ -75,10 +65,11 @@ function OnEvent(event, arg, family)
 		end
 	end
 
+	-- 鼠标按键释放事件检测
 	if event == "MOUSE_BUTTON_RELEASED" and (arg == gestureButtonNumber) then
 		if debuggingEnabeld then OutputLogMessage("\nEvent: " .. event .. " for button: " .. arg .. "\n") end
 		
-		-- Get ending mouse posistion
+		-- 获取鼠标结束位置
 		horizontalEndingPosistion, verticalEndingPosistion = GetMousePosition()
 		
 		if debuggingEnabeld then 
@@ -86,11 +77,11 @@ function OnEvent(event, arg, family)
 			OutputLogMessage("Vertical ending posistion: " .. verticalEndingPosistion .. "\n") 
 		end
 
-		-- Calculate differences between start and end posistions
+		-- 计算起始位置和结束位置的差值
 		horizontalDifference = horizontalStartingPosistion - horizontalEndingPosistion
 		verticalDifference = verticalStartingPosistion - verticalEndingPosistion
 
-		-- Determine the direction of the mouse and if the mouse moved far enough
+		-- 判断鼠标移动方向和移动距离是否足够
 		if horizontalDifference > minimalHorizontalMovement then mouseMovedLeft(arg) end
 		if horizontalDifference < -minimalHorizontalMovement then mouseMovedRight(arg) end
 		if verticalDifference > minimalVerticalMovement then mouseMovedDown(arg) end
@@ -98,7 +89,9 @@ function OnEvent(event, arg, family)
 	end
 end
 
--- Mouese Moved
+-- ==================== 方向处理函数 ====================
+
+-- 鼠标向上移动事件处理函数
 function mouseMovedUp(buttonNumber)
 	if debuggingEnabeld then OutputLogMessage("mouseMovedUp\n") end
 	
@@ -107,6 +100,7 @@ function mouseMovedUp(buttonNumber)
 	end
 end
 
+-- 鼠标向下移动事件处理函数
 function mouseMovedDown(buttonNumber)
 	if debuggingEnabeld then OutputLogMessage("mouseMovedDown\n") end
 	
@@ -115,6 +109,7 @@ function mouseMovedDown(buttonNumber)
 	end
 end
 
+-- 鼠标向左移动事件处理函数
 function mouseMovedLeft(buttonNumber)
 	if debuggingEnabeld then OutputLogMessage("mouseMovedLeft\n") end
 	
@@ -123,6 +118,7 @@ function mouseMovedLeft(buttonNumber)
 	end
 end
 
+-- 鼠标向右移动事件处理函数
 function mouseMovedRight(buttonNumber)
 	if debuggingEnabeld then OutputLogMessage("mouseMovedRight\n") end
 	
@@ -131,7 +127,9 @@ function mouseMovedRight(buttonNumber)
 	end
 end
 
--- Gesture Functions
+-- ==================== 手势功能实现 ====================
+
+-- Mission Control（Ctrl + Up）
 function performMissionControlGesture()
 	if debuggingEnabeld then OutputLogMessage("performMissionControlGesture\n") end
 	firstKey = "lctrl"
@@ -139,6 +137,7 @@ function performMissionControlGesture()
 	pressTwoKeys(firstKey, secondKey)
 end
 
+-- 应用程序窗口（Ctrl + Down）
 function performApplicationWindowsGesture()
 	if debuggingEnabeld then OutputLogMessage("performApplicationWindowsGesture\n") end
 	firstKey = "lctrl"
@@ -146,6 +145,7 @@ function performApplicationWindowsGesture()
 	pressTwoKeys(firstKey, secondKey)
 end
 
+-- 向左切换空间（Ctrl + Right）
 function performSwipeLeftGesture()
 	if debuggingEnabeld then OutputLogMessage("performSwipeLeftGesture\n") end
 	firstKey = "lctrl"
@@ -153,6 +153,7 @@ function performSwipeLeftGesture()
 	pressTwoKeys(firstKey, secondKey)
 end
 
+-- 向右切换空间（Ctrl + Left）
 function performSwipeRightGesture()
 	if debuggingEnabeld then OutputLogMessage("performSwipeRightGesture\n") end
 	firstKey = "lctrl"
@@ -160,7 +161,9 @@ function performSwipeRightGesture()
 	pressTwoKeys(firstKey, secondKey)
 end
 
--- Browser Navigation Functions
+-- ==================== 浏览器导航 ====================
+
+-- 前进手势（Ctrl + Command + Right）
 function performNextPageGesture()
 	if debuggingEnabeld then OutputLogMessage("performNextPageGesture\n") end
 	firstKey = "lctrl"
@@ -169,6 +172,7 @@ function performNextPageGesture()
 	pressThreeKeys(firstKey, secondKey, thirdKey)
 end
 
+-- 后退手势（Ctrl + Command + Left）
 function performPreviousPageGesture()
 	if debuggingEnabeld then OutputLogMessage("performPreviousPageGesture\n") end
 	firstKey = "lctrl"
@@ -177,7 +181,9 @@ function performPreviousPageGesture()
 	pressThreeKeys(firstKey, secondKey, thirdKey)
 end
 
--- Helper Functions
+-- ==================== 辅助函数 ====================
+
+-- 按下两个按键
 function pressTwoKeys(firstKey, secondKey)
 	PressKey(firstKey)
 	Sleep(delay)
@@ -187,8 +193,9 @@ function pressTwoKeys(firstKey, secondKey)
 	ReleaseKey(secondKey)
 end
 
+-- 按下三个按键
 function pressThreeKeys(firstKey, secondKey, thirdKey)
-       PressKey(firstKey)
+    PressKey(firstKey)
 	Sleep(delay)
 	PressKey(secondKey)
 	Sleep(delay)
