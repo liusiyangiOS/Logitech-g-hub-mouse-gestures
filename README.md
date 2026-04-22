@@ -164,8 +164,9 @@ Issues and pull requests are welcome! If you have ideas for improvements or find
 
 ---
 
-## More
+## Blogs
 
+- [让你的罗技鼠标秒变 Master 系列：macOS 鼠标手势脚本完整指南](https://www.jianshu.com/p/9782e6dab44e)
 - [Author's blog](https://www.jianshu.com/u/e1fee33c72bc)
 
 ---

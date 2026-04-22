@@ -164,8 +164,9 @@ end
 
 ---
 
-## 更多
+## 相关博客
 
+- [让你的罗技鼠标秒变 Master 系列：macOS 鼠标手势脚本完整指南](https://www.jianshu.com/p/9782e6dab44e)
 - [作者博客](https://www.jianshu.com/u/e1fee33c72bc)
 
 ---
