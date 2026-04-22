@@ -164,6 +164,12 @@ Issues and pull requests are welcome! If you have ideas for improvements or find
 
 ---
 
+## More
+
+- [Author's blog](https://www.jianshu.com/u/e1fee33c72bc)
+
+---
+
 **Enjoy your enhanced Logitech mouse! 🎯**
 
 <!-- external links -->

@@ -164,6 +164,12 @@ end
 
 ---
 
+## 更多
+
+- [作者博客](https://www.jianshu.com/u/e1fee33c72bc)
+
+---
+
 **享受你增强版的罗技鼠标吧！🎯**
 
 <!-- external links -->
